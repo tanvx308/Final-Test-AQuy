@@ -3,14 +3,21 @@ package com.fis.java.testfinal.exception;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class AppException extends Exception{
+public class AppException extends RuntimeException{
     private String code;
-    public AppException(String code, String message){
-        super(message);
+    private String resourceName;
+    private String fieldName;
+    private String fieldValue;
+
+    public AppException(String code, String resourceName, String fieldName, String fieldValue){
+        super(String.format("Error %s: %s with %s : %s", code, resourceName, fieldName, fieldValue));
         this.code = code;
+        this.resourceName = resourceName;
+        this.fieldName = fieldName;
+        this.fieldValue = fieldValue;
     }
 }

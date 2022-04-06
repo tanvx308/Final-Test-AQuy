@@ -14,12 +14,15 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormTransactionDto {
-    @NotNull(message = "TXN001: From Account is not valid.")
+    @NotNull(message = "From Account is not valid.")
     private Account fromAccount;
-    @NotNull(message = "TXN002: To Account is not valid.")
+
+    @NotNull(message = "To Account is not valid.")
     private Account toAccount;
-    @NotNull(message = "TXN003: Amount shoule not be null.")
-    @Min(value = 1000, message = "TXN004: Amount should not be less than 1000.")
+
+    @NotNull(message = "Amount shoule not be null.")
+    @Min(value = 1000, message = "Amount should not be less than 1000.")
     private Double amount;
+
     private String content;
 }

@@ -6,7 +6,20 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
+@NamedQueries({
+        @NamedQuery(
+                name = "findTransactionsByAccountNumberAndTime",
+                query = "SELECT t FROM Transaction t join t.fromAccount f join t.toAccount a  WHERE (f.accountNumber = :number or a.accountNumber = :number) and t.transactionDate between :fromDate and :toDate"
+        ),
+        @NamedQuery(
+                name = "reportByDayBetween",
+                query = "SELECT new Report (t.transactionDate, c.customerType, t.status, sum(t.amount), count (t)) FROM Transaction t join t.fromAccount f join f.customer c where t.status = :status and t.transactionDate between :fromDate and :toDate group by t.transactionDate, c.customerType, t.status"
+        ),
+        @NamedQuery(
+                name = "reportByDay",
+                query = "SELECT t, c.name, c.customerType  FROM Transaction t JOIN t.fromAccount f join f.customer c WHERE t.transactionDate = :dateTime"
+        )
+})
 @Entity
 @Table(name = "transaction")
 @Data

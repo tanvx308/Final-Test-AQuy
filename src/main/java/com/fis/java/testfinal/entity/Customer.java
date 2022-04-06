@@ -1,12 +1,12 @@
 package com.fis.java.testfinal.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fis.java.testfinal.constant.CustomerType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -15,7 +15,10 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+public class Customer implements Serializable {
+    public enum CustomerType {
+        INDIVIDUAL, CORPORATE
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,13 +33,15 @@ public class Customer {
     @Column(nullable = true, length = 10)
     private String mobile;
     @Column(nullable = false)
-    private String customerType;
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
     @Column(nullable = false)
     private Integer status;
     @Column(nullable = false)
     private LocalDateTime createDateTime;
     @Column(nullable = false)
     private LocalDateTime updateDateTime;
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Set<Account> accounts;
 }

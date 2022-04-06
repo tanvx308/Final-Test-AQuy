@@ -7,15 +7,21 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormAccountDto {
-    @NotNull(message = "ACC001: Account Number should not be null.")
+    @NotNull(message = "Account Number should not be null.")
     @Length(max = 13, message = "ACC002: Account Number`s length is 13")
     private String accountNumber;
-   @NotNull(message = "ACC003: Customer is not valid.")
+
+    @NotNull(message = "Account Balance should not be null.")
+    @Min(value = 0)
+    private Double balance;
+
+   @NotNull(message = "Customer is not valid.")
     private Customer customer;
 }

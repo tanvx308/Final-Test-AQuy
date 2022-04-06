@@ -1,12 +1,11 @@
 package com.fis.java.testfinal.service.impl;
 
-import com.fis.java.testfinal.constant.CustomerStatus;
 import com.fis.java.testfinal.entity.Customer;
-import com.fis.java.testfinal.exception.NotValidCustomerException;
+import com.fis.java.testfinal.exception.ResourceExistException;
+import com.fis.java.testfinal.exception.ResourceNotFoundException;
 import com.fis.java.testfinal.repo.CustomerRepo;
 import com.fis.java.testfinal.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -18,45 +17,35 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepo customerRepo;
 
     @Override
-    public List<Customer> findAll(Pageable pageable) {
-        Page<Customer> customerPage = customerRepo.findAll(pageable);
-        return customerPage.getContent();
+    public List<Customer> findAllCustomer(Pageable pageable) {
+        return customerRepo.findAll(pageable).getContent();
     }
 
     @Override
-    public Customer create(Customer customer) throws NotValidCustomerException {
+    public Customer createCustomer(Customer customer) {
         Customer ctm = customerRepo.findByIdentityNo(customer.getIdentityNo());
         if(ctm != null){
-            throw new NotValidCustomerException("CUS405", String.format("Customer with Identity No %s is exist.", customer.getIdentityNo()));
+            throw new ResourceExistException("CUS405", "Customer", "Identity No", customer.getIdentityNo());
         }
         return customerRepo.save(customer);
     }
 
     @Override
-    public Customer update(Customer customer) throws NotValidCustomerException {
-        Long id = customer.getId();
+    public Customer updateCustomer(Customer customer, Long id) {
         if(!customerRepo.existsById(id)){
-            throw new NotValidCustomerException("CUS404", String.format("Customer with id %d is not exist.", id));
+            throw new ResourceNotFoundException("CUS404", "Customer", "Id", String.valueOf(id));
         }
+        customer.setId(id);
         return customerRepo.save(customer);
     }
 
     @Override
-    public void delete(Long id) throws NotValidCustomerException {
-        Optional<Customer> customer = customerRepo.findById(id);
-        if(!customer.isPresent()){
-            throw new NotValidCustomerException("CUS404", String.format("Customer with id %d is not exist.", id));
-        }
-        Customer ctm = customer.get();
-        ctm.setStatus(CustomerStatus.IN_ACTIVE);
-        customerRepo.save(ctm);
-    }
-
-    @Override
-    public Customer findById(Long id) throws NotValidCustomerException {
-        if(!customerRepo.existsById(id)){
-            throw new NotValidCustomerException("CUS404", String.format("Customer with id %d is not exist.", id));
-        }
-        return customerRepo.findById(id).orElse(null);
+    public Customer findCustomerById(Long id) {
+       Optional<Customer> customer = customerRepo.findById(id);
+       if(customer.isPresent()){
+           return customer.get();
+       }else{
+           throw new ResourceNotFoundException("CUS404", "Customer", "Id", String.valueOf(id));
+       }
     }
 }
