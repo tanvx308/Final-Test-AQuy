@@ -1,6 +1,7 @@
 package com.fis.java.testfinal.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
         ),
         @NamedQuery(
                 name = "reportByDay",
-                query = "SELECT t, c.name, c.customerType  FROM Transaction t JOIN t.fromAccount f join f.customer c WHERE t.transactionDate = :dateTime"
+                query = "SELECT t, c.name, c.customerType  FROM Transaction t JOIN t.fromAccount f join f.customer c WHERE t.transactionDate between :startOfDay and :endOfDay"
         )
 })
 @Entity
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,4 +44,18 @@ public class Transaction {
     private Integer status;
     private String content;
     private String errorReason;
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", transactionDate=" + transactionDate +
+                ", fromAccount=" + fromAccount +
+                ", toAccount=" + toAccount +
+                ", amount=" + amount +
+                ", status=" + status +
+                ", content='" + content + '\'' +
+                ", errorReason='" + errorReason + '\'' +
+                '}';
+    }
 }

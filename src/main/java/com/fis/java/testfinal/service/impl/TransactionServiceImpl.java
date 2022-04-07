@@ -4,17 +4,19 @@ import com.fis.java.testfinal.constant.AccountStatus;
 import com.fis.java.testfinal.constant.TransactionStatus;
 import com.fis.java.testfinal.entity.Account;
 import com.fis.java.testfinal.entity.Transaction;
-import com.fis.java.testfinal.exception.ArgumentNotValidException;
+import com.fis.java.testfinal.exception.AppException;
 import com.fis.java.testfinal.exception.TransactionException;
+import com.fis.java.testfinal.model.ErrorMessage;
 import com.fis.java.testfinal.model.Report;
 import com.fis.java.testfinal.repo.TransactionRepo;
 import com.fis.java.testfinal.service.AccountService;
 import com.fis.java.testfinal.service.TransactionService;
-import com.fis.java.testfinal.utils.CSVUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import javax.transaction.Transactional;
@@ -71,7 +73,7 @@ public class TransactionServiceImpl implements TransactionService {
         LocalDateTime toDate = LocalDateTime.parse(to, formatter);
         Long daysBetween = ChronoUnit.DAYS.between(fromDate, toDate);
         if(daysBetween > 60){
-            throw new ArgumentNotValidException("REP400", "Days between must less than 60.");
+            throw new AppException("Argument", new ErrorMessage("AGR400", "Days between must less than 60."));
         }
         return transactionRepo.findAllByTransactionDateBetween(fromDate, toDate);
     }
@@ -86,8 +88,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Object[]> reportByDay(String dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, formatter);
-        return transactionRepo.reportByDay(localDateTime);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.now().minus(Period.ofDays(1));
+        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        return transactionRepo.reportByDay(startOfDay, endOfDay);
     }
 }

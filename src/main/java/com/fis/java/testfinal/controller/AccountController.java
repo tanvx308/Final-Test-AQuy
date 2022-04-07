@@ -22,6 +22,7 @@ public class AccountController {
     @Autowired
     AccountService accountService;
 
+    //api Liệt kê danh sách Account
     @GetMapping("/accounts")
     public ResponseEntity<List<Account>> getAccountsOrderByCustomerName(@RequestParam("page")Optional<Integer> page,
                                                             @RequestParam("size")Optional<Integer> size){
@@ -30,6 +31,9 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
+    //api Tìm kiếm Account
+    //hiệu lực theo mã
+    //khách hàng
     @GetMapping("/account/customer/{id}/active")
     public ResponseEntity<List<Account>> getActiveAccountByCustomerIdOrderOrderByAccountNumber(@PathVariable("id") Optional<Long> id){
         Integer status = AccountStatus.ACTIVE;
@@ -37,6 +41,10 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
+
+    //api Tìm kiếm Account hết
+    //hiệu lực theo mã
+    //khách hàng
     @GetMapping("/account/customer/{id}/in-active")
     public ResponseEntity<List<Account>> getInActiveAccountByCustomerIdOrderOrderByAccountNumber(@PathVariable("id") Optional<Long> id){
         Integer status = AccountStatus.IN_ACTIVE;
@@ -44,6 +52,9 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
+    //api Tìm kiếm tất cả
+    //Account theo khách
+    //hàng
     @GetMapping("/account/customer/{id}")
     public ResponseEntity<List<Account>> getAccountByCustomerIdOrderOrderByStatusAndAccountNumber(@PathVariable("id") Optional<Long> id){
         Integer status = null;
@@ -51,16 +62,21 @@ public class AccountController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
+    //api Tìm kiếm account
+    //theo Id
     @GetMapping("/account/id/{id}")
     public ResponseEntity<Account> getAccountById(@PathVariable("id") Optional<Long> id){
         return new ResponseEntity<>(accountService.findAccountById(id.orElse(null)), HttpStatus.OK);
     }
 
+    //api Tìm kiếm account
+    //theo số TK
     @GetMapping("/account/account-number/{accountNumber}")
     public ResponseEntity<Account> getAccountByAccountNumber(@PathVariable("accountNumber") Optional<String> accountNumber){
         return new ResponseEntity<>(accountService.findAccountByAccountNumber(accountNumber.orElse(null)), HttpStatus.OK);
     }
 
+    //api Thêm mới tài khoản
     @PostMapping("/account/save")
     public ResponseEntity<Account> createAccount(@RequestBody FormAccountDto dto){
         Account account = AccountUtil.convertFromDto(dto);
@@ -69,6 +85,7 @@ public class AccountController {
         return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
+    //api Phê duyệt tài khoản
     @GetMapping("/account/approve/{id}")
     public ResponseEntity<Account> approveAccount(@PathVariable("id") Optional<Long> id){
         Account account = accountService.approveAccount(id.orElse(null));
@@ -76,6 +93,9 @@ public class AccountController {
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
+    //api Cập nhật trạng thái
+    //tài khoản (Hết hiệu
+    //lực/ tạm khóa)
     @GetMapping("/account/{id}/status/{status}")
     public ResponseEntity<Account> updateAccountStatus(@PathVariable("id") Optional<Long> id,
                                                  @PathVariable("status")Optional<Integer> status){

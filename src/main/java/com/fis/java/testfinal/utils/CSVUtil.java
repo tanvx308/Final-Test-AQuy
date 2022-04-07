@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -21,11 +22,14 @@ public class CSVUtil {
 
             CSVWriter writer = new CSVWriter(outputfile);
 
-            String[] header = { "Id", "Amount", "Content", "Error Reason", "Status", "Date", "FromAccount", "ToAccount", "Customer Name", "Customer Type" };
+            String[] header = { "Transaction", "Customer Name", "Customer Type" };
             writer.writeNext(header);
 
             // add data to csv
-            objects.stream().forEach(item -> writer.writeNext((String[]) item));
+            for (Object[] objArr: objects){
+                String[] strArr = Arrays.stream(objArr).map(Object::toString).toArray(String[]::new);
+                writer.writeNext(strArr);
+            }
             // closing writer connection
             writer.close();
         }

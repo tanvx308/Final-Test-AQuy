@@ -3,7 +3,6 @@ package com.fis.java.testfinal.utils;
 import com.fis.java.testfinal.constant.CustomerStatus;
 import com.fis.java.testfinal.dto.FormCustomerDto;
 import com.fis.java.testfinal.entity.Customer;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 

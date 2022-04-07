@@ -21,5 +21,5 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
     List<Report> reportByDayBetween(@Param("fromDate")LocalDateTime from, @Param("toDate") LocalDateTime to, @Param("status") Integer status);
 
     @Query(name = "reportByDay")
-    List<Object[]> reportByDay(LocalDateTime dateTime);
+    List<Object[]> reportByDay(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

@@ -2,6 +2,7 @@ package com.fis.java.testfinal.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,12 +10,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
-
+@NamedQuery(
+        name = "searchByKeyword",
+        query = "SELECT c FROM Customer c WHERE c.status =: key or c.customerType = :key or c.name like :word or c.address like :word or c.mobile like :word or c.identityNo like :word"
+)
 @Entity
 @Table(name = "customer")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Customer implements Serializable {
     public enum CustomerType {
         INDIVIDUAL, CORPORATE
@@ -44,4 +49,12 @@ public class Customer implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private Set<Account> accounts;
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "name='" + name + '\'' +
+                ", customerType=" + customerType +
+                '}';
+    }
 }

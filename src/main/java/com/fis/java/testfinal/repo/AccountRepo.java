@@ -17,4 +17,5 @@ public interface AccountRepo extends JpaRepository<Account, Long> {
     Account findAccountByAccountNumber(String accountNumber);
 
     List<Account> findAccountByCustomer_IdAndStatusOrderByAccountNumber(Long id, Integer status);
+
 }

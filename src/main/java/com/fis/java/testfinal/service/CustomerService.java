@@ -13,4 +13,6 @@ public interface CustomerService {
     Customer updateCustomer(Customer customer, Long id);
 
     Customer findCustomerById(Long id);
+
+    List<Customer> searchByKeyword(String keyword);
 }

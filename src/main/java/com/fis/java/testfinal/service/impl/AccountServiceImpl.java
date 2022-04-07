@@ -3,8 +3,8 @@ package com.fis.java.testfinal.service.impl;
 import com.fis.java.testfinal.constant.AccountStatus;
 import com.fis.java.testfinal.entity.Account;
 import com.fis.java.testfinal.entity.Customer;
-import com.fis.java.testfinal.exception.ResourceExistException;
-import com.fis.java.testfinal.exception.ResourceNotValidException;
+import com.fis.java.testfinal.exception.AppException;
+import com.fis.java.testfinal.model.ErrorMessage;
 import com.fis.java.testfinal.repo.AccountRepo;
 import com.fis.java.testfinal.service.AccountService;
 import com.fis.java.testfinal.service.CustomerService;
@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findAccountByCustomer_IdAndStatusOrderByAccountNumber(Long id, Integer status) {
         Customer customer = customerService.findCustomerById(id);
         if(customer == null){
-            throw new ResourceExistException("CUS404", "Customer", "Id", String.valueOf(id));
+            throw new AppException("Customer", new ErrorMessage("CUS404", "Customer is not exist."));
         }
         if(status == null){
             List<Account> accounts = accountRepo.findAccountByCustomer_Id(id);
@@ -60,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
         if(account.isPresent()){
             return account.get();
         }else{
-            throw new ResourceExistException("ACC404", "Account", "Id", String.valueOf(id));
+            throw new AppException("Account", new ErrorMessage("ACC404", "Account is not exist."));
         }
     }
 
@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
     public Account findAccountByAccountNumber(String accountNumber) {
         Account account = accountRepo.findAccountByAccountNumber(accountNumber);
         if(account == null){
-            throw new ResourceExistException("ACC404", "Account", "Account Number", accountNumber);
+            throw new AppException("Account", new ErrorMessage("CUS404", "Account is not exist."));
         }
         return account;
     }
@@ -87,17 +87,17 @@ public class AccountServiceImpl implements AccountService {
                 account.setStatus(AccountStatus.ACTIVE);
                 return accountRepo.save(account);
             }else{
-                throw new ResourceNotValidException("ACC400", "Account", "Status", String.valueOf(account.getStatus()));
+                throw new AppException("Account", new ErrorMessage("CUS401", "Account`s Status is not valid."));
             }
         }else{
-            throw new ResourceExistException("ACC404", "Account", "Id", String.valueOf(id));
+            throw new AppException("Account", new ErrorMessage("CUS404", "Account is not exist."));
         }
     }
 
     @Override
     public Account updateAccountStatus(Long id, Integer status) {
         if(!status.equals(AccountStatus.IN_ACTIVE) && !status.equals(AccountStatus.LOCK)){
-            throw new ResourceNotValidException("ACC400", "Account", "Status", String.valueOf(status));
+            throw new AppException("Account", new ErrorMessage("CUS400", "Account`s Status is not valid."));
         }
         Optional<Account> optionalAccount = accountRepo.findById(id);
         if(optionalAccount.isPresent()){
@@ -105,7 +105,7 @@ public class AccountServiceImpl implements AccountService {
             account.setStatus(status);
             return accountRepo.save(account);
         }else{
-            throw new ResourceExistException("ACC404", "Account", "Id", String.valueOf(id));
+            throw new AppException("Account", new ErrorMessage("CUS404", "Account is not exist."));
         }
     }
 
